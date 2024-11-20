@@ -1,0 +1,20 @@
+sudo apt install maven 
+mvn -version
+
+Maven Lifecycle:
+-----------------
+
+mvn validate --> validates the code base
+mvn compile --> compiles the code
+mvn test  --> executes the est cases
+mvn package --> builds a .jar file of a code base inside a target folder
+mvn install -->Installs a .jar file and pom file is must here
+mvn clean -> deletes the target folder 
+
+mvn clean package --> deletes old .jar file and creates new .jar file
+
+
+How to run a .jar file:
+--------------------------
+
+java -jar target/spring-boot-web.jar 
