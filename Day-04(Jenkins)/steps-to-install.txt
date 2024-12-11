@@ -1,0 +1,93 @@
+Ways To Install Jenkins on Windows & Linux
+
+--- INSTALL JENKINS ON LINUX METHOD -1 ---
+
+sudo apt update -y
+sudo apt install openjdk-11-jre -y
+
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update -y 
+sudo apt-get install jenkins -y
+
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+
+
+--- INSTALL JENKINS ON LINUX METHOD -2 ---
+
+
+sudo apt update -y
+sudo apt install openjdk-11-jre -y
+sudo wget https://updates.jenkins.io/download/war/2.387.3/jenkins.war
+java -jar Jenkins.war  --httpPort=8082
+
+
+
+To change port for jenkins server:
+----------------------------------
+
+1. sudo nano /usr/lib/systemd/system/jenkins.service
+2. sudo systemctl daemon-reload
+
+3. vi /etc/default/jenkins ---> to change the port to 8082
+4. sudo systemctl restart jenkins
+
+5. sudo cat /var/lib/jenkins/secrets/initialAdminPassword    --> to view the jenkins initial admin password
+
+
+To change port for apache tomcat server:
+---------------------------------------
+
+1. /opt/apache-tomcat-9.0.65/conf/server.xml -->find connector part and change the default port.
+
+
+
+
+
+Detailed steps to install jenkins on Ubuntu 24.04
+===================================================
+
+1. sudo apt update -y && sudo apt upgrade -y    --> Update the System
+2. sudo apt install openjdk-21-jdk -y           --> Install Java
+3. java -version
+
+Add Jenkins GPG key and Repository
+------------------------------------
+
+4. sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+5. echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+/etc/apt/sources.list.d/jenkins.list > /dev/null
+6. sudo apt update -y
+
+Install Jenkins on Ubuntu 24.04
+----------------------------------
+
+7. sudo apt install jenkins -y
+8. sudo systemctl start jenkins && sudo systemctl enable jenkins
+9. sudo systemctl status jenkins
+
+Finalize Install Jenkins on Ubuntu 24.04
+-----------------------------------------
+
+10. cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
+To change default port
+----------------------------
+
+11. sudo nano /etc/default/jenkins
+12. sudo nano /lib/systemd/system/jenkins.service
+
+
+13. sudo systemctl daemon-reload
+14. sudo systemctl restart jenkins
+
+To know on which port Jenkins is currently running
+--------------------------------------------------
+
+sudo lsof -i -n -P | grep jenkins
