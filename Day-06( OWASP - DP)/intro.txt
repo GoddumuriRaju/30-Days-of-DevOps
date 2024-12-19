@@ -1,0 +1,4 @@
+Important Links:
+
+1. maven repository: https://mvnrepository.com/    --> for finding artifactory
+2. OWASP file type analyzer: https://jeremylong.github.io/DependencyCheck/analyzers/
