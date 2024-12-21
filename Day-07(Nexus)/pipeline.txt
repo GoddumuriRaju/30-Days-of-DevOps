@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+    
+    tools{
+        jdk 'jdk21'
+        maven 'maven3'
+    }
+    
+    environment{
+        SCANNER_HOME=tool 'sonar-scanner'
+    }
+    
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/GoddumuriRaju/Petclinic.git'
+            }
+        }
+        
+        stage('Compile') {
+            steps {
+                sh "mvn clean compile"
+            }
+        }
+        
+        stage('Test Cases') {
+            steps {
+                sh "mvn test"
+            }
+        }
+        
+        stage('Sonarqube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Petclinic \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.projectKey=Petclinic '''
+                  }
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+
+        stage('Vulnerability Check') {
+            steps {
+                  dependencyCheck additionalArguments: '--scan target/', odcInstallation: 'dp'
+                  dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        
+        stage('Deploy maven artifact to Nexus Repo') {
+            steps {
+                configFileProvider([configFile(fileId: 'b407f085-4005-4ce2-ad5e-cd9b9bbdd5d6', variable: 'mavensettings')]) {
+                    sh "mvn -s $mavensettings clean deploy -DskipTests=true"
+                }
+
+               }
+            }
+        
+        
+        
+        stage('Deploy app to Tomcat') {
+            steps {
+                // sh "cp target/petclinic.war /opt/apache-tomcat-9.0.65/webapps"
+                echo "Deployed petclinic springboot application on Apache Tomcat successfully. "
+            }
+        }
+    }
+}

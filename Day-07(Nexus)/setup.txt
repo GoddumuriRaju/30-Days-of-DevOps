@@ -1,0 +1,79 @@
+Steps to install Nexus on Linux:
+------------------------------------
+
+1. wget https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+2. tar -xf latest-unix.tar.gz
+3. cd nexus & chmod +x nexus
+4. ./nexus start
+
+Alternative: Install Nexus using Docker
+--------------------------------------
+
+docker run -d --name nexus -p 8081:8081 sonatype/nexus3
+
+
+
+Include the following information in the POM file:
+-----------------------------------------------------
+1)
+
+
+<distributionManagement>
+  <repository>
+    <id>maven-releases</id>
+    <!-- CHANGE HERE by your team Nexus server -->
+    <url>http://13.126.124.159:8081/repository/maven-releases/</url>
+  </repository>
+  <snapshotRepository>
+    <id>maven-snapshots</id>
+    <!-- CHANGE HERE by your team Nexus server -->
+    <url>http://13.126.124.159:8081/repository/maven-releases/</url>
+  </snapshotRepository>
+</distributionManagement>
+
+
+2)
+
+<repository>
+  <id>maven-releases</id>
+  <name>maven-releases</name>
+  <url>http://13.126.124.159:8081/repository/maven-releases/</url>
+</repository>
+
+
+
+To authenticate with Nexus using a settings.xml file, include the following configuration in the file:
+------------------------------------------------------------------------------------------------------
+
+
+<settings>
+  <servers>
+    <server>
+      <id>nexus-releases</id>
+      <username>your-username</username>
+      <password>your-password</password>
+    </server>
+    <server>
+      <id>nexus-snapshots</id>
+      <username>your-username</username>
+      <password>your-password</password>
+    </server>
+  </servers>
+</settings>
+
+
+Update the following in jenkins pipeline:
+-------------------------------------------
+
+Note: Manage Jenkins -> Managedfiles -> add a new config -> update nexus server auth details
+
+configFileProvider([configFile(fileId: '1c322f97-3d77-4302-abe0-7dd0d866eab0', variable: 'mavensettings')]) {
+                  
+                  sh "mvn -s $mavensettings clean deploy -DskipTests=true"
+                  
+                }
+
+
+----------------------------------------------
+
+All Done.
